@@ -10,7 +10,7 @@ image:
 # define environment variables here as a map of key: value
 env:
   SERVER_PORT: 8080
-  PAYMENTS_SERVICE: http://payment-service
+  PAYMENTS_SERVICE: http://payments-service
 # enable this flag to use knative serve to deploy the app
 knativeDeploy: false
 
