@@ -31,8 +31,8 @@ public class TicketsServiceApplication {
         SpringApplication.run(TicketsServiceApplication.class, args);
     }
 
-    @Value("${CLOUD_EVENTS_BRIDGE:http://localhost:8080}")
-    private String CLOUD_EVENTS_BRIDGE;
+    @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://localhost:8080}")
+    private String ZEEBE_CLOUD_EVENTS_ROUTER;
     @Value("${PAYMENTS_SERVICE:http://localhost:8083}")
     private String PAYMENTS_SERVICE = "";
     private LinkedList<TicketPurchaseSession> queue = new LinkedList<>();
@@ -64,7 +64,7 @@ public class TicketsServiceApplication {
 
                         String cloudEventJson = Json.encode(zeebeCloudEvent);
                         log.info("Before sending Cloud Event: " + cloudEventJson);
-                        WebClient webClient = WebClient.builder().baseUrl(CLOUD_EVENTS_BRIDGE).filter(logRequest()).build();
+                        WebClient webClient = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
 
                         WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, "/message", zeebeCloudEvent);
 
