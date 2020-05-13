@@ -51,7 +51,7 @@ public class TicketsServiceApplication {
                         CloudEventBuilder<String> cloudEventBuilder = CloudEventBuilder.<String>builder()
                                 .withId(UUID.randomUUID().toString())
                                 .withTime(ZonedDateTime.now())
-                                .withType("Tickets.Reserved")
+                                .withType("Tickets.Requested")
                                 .withSource(URI.create("tickets.service.default"))
                                 .withData("{\"tickets\" : " + 2 + "}")
                                 .withDatacontenttype("application/json")
