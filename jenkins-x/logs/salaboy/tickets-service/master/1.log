@@ -1,31 +1,31 @@
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-credential-initializer-mgr5p[0m
-{"level":"info","ts":1592231404.8793736,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
-{"level":"info","ts":1592231404.884355,"logger":"fallback-logger","caller":"creds-init/main.go:40","msg":"Credentials initialized."}
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mcredential-initializer[0m
+{"level":"info","ts":1596441205.531997,"caller":"creds-init/main.go:44","msg":"Credentials initialized."}
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-working-dir-initializer-nm8kb[0m
-{"level":"info","ts":1592231405.3464653,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/HEAD: no such file or directory"}
-{"level":"info","ts":1592231405.353483,"logger":"fallback-logger","caller":"bash/main.go:64","msg":"Successfully executed command \"sh -c mkdir -p /workspace/source\"; output "}
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mworking-dir-initializer[0m
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-place-tools[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mplace-tools[0m
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-git-source-salaboy-tickets-service-master-477xc-6r2br[0m
-{"level":"info","ts":1592231434.4270427,"logger":"fallback-logger","caller":"logging/config.go:69","msg":"Fetch GitHub commit ID from kodata failed: open /var/run/ko/refs/heads/0.8.0-ns-support: no such file or directory"}
-{"level":"info","ts":1592231435.6439137,"logger":"fallback-logger","caller":"git/git.go:103","msg":"Successfully cloned https://github.com/*******/tickets-service.git @ v0.0.6 in path /workspace/source"}
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-git-source-salaboy-tickets-service-master-7wjx7-wvg6v[0m
+{"level":"info","ts":1596441231.3833911,"caller":"git/git.go:105","msg":"Successfully cloned https://github.com/*******/tickets-service.git @ v0.0.7 in path /workspace/source"}
+{"level":"warn","ts":1596441231.3838027,"caller":"git/git.go:152","msg":"Unexpected error: creating symlink: symlink /tekton/home/.ssh /root/.ssh: file exists"}
+{"level":"info","ts":1596441231.4552808,"caller":"git/git.go:133","msg":"Successfully initialized and updated submodules in path /workspace/source"}
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-git-merge[0m
-Using SHAs from PULL_REFS=master:
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-setup-builder-home[0m
+
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-git-merge[0m
+Using SHAs from PULL_REFS=master:64f0d34031f2dae134bdf6695cd4695d8f3154e9
 WARNING: no SHAs to merge, falling back to initial cloned commit
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-setup-jx-git-credentials[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-setup-jx-git-credentials[0m
 Generated Git credentials file /workspace/xdg_config/git/credentials
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-mvn-deploy[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-mvn-deploy[0m
 Picked up _JAVA_OPTIONS: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xms10m -Xmx192m
 [INFO] Scanning for projects...
 [INFO] 
 [INFO] ----------------< com.*******.tickets:tickets-service >-----------------
-[INFO] Building tickets-service 0.0.6
+[INFO] Building tickets-service 0.0.7
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ tickets-service ---
@@ -53,26 +53,26 @@ Picked up _JAVA_OPTIONS: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemor
 [INFO]  T E S T S
 [INFO] -------------------------------------------------------
 [INFO] Running com.*******.tickets.service.TicketsServiceApplicationTests
-14:31:03.832 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
-14:31:03.871 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
-14:31:03.953 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.*******.tickets.service.TicketsServiceApplicationTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
-14:31:04.003 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.*******.tickets.service.TicketsServiceApplicationTests], using SpringBootContextLoader
-14:31:04.021 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: class path resource [com/*******/tickets/service/TicketsServiceApplicationTests-context.xml] does not exist
-14:31:04.030 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: class path resource [com/*******/tickets/service/TicketsServiceApplicationTestsContext.groovy] does not exist
-14:31:04.034 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
-14:31:04.045 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: TicketsServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-14:31:04.213 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.*******.tickets.service.TicketsServiceApplicationTests]
-14:31:04.436 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/workspace/source/target/classes/com/*******/tickets/service/TicketsServiceApplication.class]
-14:31:04.451 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.*******.tickets.service.TicketsServiceApplication for test class com.*******.tickets.service.TicketsServiceApplicationTests
-14:31:04.707 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.*******.tickets.service.TicketsServiceApplicationTests]: using defaults.
-14:31:04.713 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-14:31:04.767 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Skipping candidate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] due to a missing dependency. Specify custom listener classes or make the default listener classes and their required dependencies available. Offending class: [javax/servlet/ServletContext]
-14:31:04.791 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Skipping candidate TestExecutionListener [org.springframework.test.context.transaction.TransactionalTestExecutionListener] due to a missing dependency. Specify custom listener classes or make the default listener classes and their required dependencies available. Offending class: [org/springframework/transaction/TransactionDefinition]
-14:31:04.800 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Skipping candidate TestExecutionListener [org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener] due to a missing dependency. Specify custom listener classes or make the default listener classes and their required dependencies available. Offending class: [org/springframework/transaction/interceptor/TransactionAttribute]
-14:31:04.807 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@53d102a2, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@6c45ee6e, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@6b3e12b5, org.springframework.test.context.support.DirtiesContextTestExecutionListener@5aac4250, org.springframework.test.context.event.EventPublishingTestExecutionListener@1338fb5, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@42463763, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@59f63e24, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@61f05988, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@7ca33c24, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@fade1fc]
-14:31:04.838 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@54c62d71 testClass = TicketsServiceApplicationTests, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [ReactiveWebMergedContextConfiguration@65045a87 testClass = TicketsServiceApplicationTests, locations = '{}', classes = '{class com.*******.tickets.service.TicketsServiceApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2d29b4ee, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@6f36c2f0, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@503f91c3, org.springframework.boot.test.web.reactive.server.WebTestClientContextCustomizer@461ad730, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2eea88a1], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]], class annotated with @DirtiesContext [false] with mode [null].
-14:31:04.890 [main] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener - Performing dependency injection for test context [[DefaultTestContext@54c62d71 testClass = TicketsServiceApplicationTests, testInstance = com.*******.tickets.service.TicketsServiceApplicationTests@65fe9e33, testMethod = [null], testException = [null], mergedContextConfiguration = [ReactiveWebMergedContextConfiguration@65045a87 testClass = TicketsServiceApplicationTests, locations = '{}', classes = '{class com.*******.tickets.service.TicketsServiceApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2d29b4ee, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@6f36c2f0, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@503f91c3, org.springframework.boot.test.web.reactive.server.WebTestClientContextCustomizer@461ad730, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2eea88a1], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]]].
-14:31:04.992 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true, server.port=-1}
+07:54:31.405 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+07:54:31.426 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+07:54:31.529 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.*******.tickets.service.TicketsServiceApplicationTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+07:54:31.557 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.*******.tickets.service.TicketsServiceApplicationTests], using SpringBootContextLoader
+07:54:31.571 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: class path resource [com/*******/tickets/service/TicketsServiceApplicationTests-context.xml] does not exist
+07:54:31.581 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: class path resource [com/*******/tickets/service/TicketsServiceApplicationTestsContext.groovy] does not exist
+07:54:31.587 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
+07:54:31.591 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.*******.tickets.service.TicketsServiceApplicationTests]: TicketsServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+07:54:31.699 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.*******.tickets.service.TicketsServiceApplicationTests]
+07:54:31.921 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/workspace/source/target/classes/com/*******/tickets/service/TicketsServiceApplication.class]
+07:54:31.944 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.*******.tickets.service.TicketsServiceApplication for test class com.*******.tickets.service.TicketsServiceApplicationTests
+07:54:32.237 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.*******.tickets.service.TicketsServiceApplicationTests]: using defaults.
+07:54:32.249 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+07:54:32.290 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Skipping candidate TestExecutionListener [org.springframework.test.context.web.ServletTestExecutionListener] due to a missing dependency. Specify custom listener classes or make the default listener classes and their required dependencies available. Offending class: [javax/servlet/ServletContext]
+07:54:32.304 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Skipping candidate TestExecutionListener [org.springframework.test.context.transaction.TransactionalTestExecutionListener] due to a missing dependency. Specify custom listener classes or make the default listener classes and their required dependencies available. Offending class: [org/springframework/transaction/TransactionDefinition]
+07:54:32.311 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Skipping candidate TestExecutionListener [org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener] due to a missing dependency. Specify custom listener classes or make the default listener classes and their required dependencies available. Offending class: [org/springframework/transaction/interceptor/TransactionAttribute]
+07:54:32.316 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@42463763, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@59f63e24, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@61f05988, org.springframework.test.context.support.DirtiesContextTestExecutionListener@7ca33c24, org.springframework.test.context.event.EventPublishingTestExecutionListener@fade1fc, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@67c2e933, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@41dd05a, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@613a8ee1, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@178213b, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@7103cb56]
+07:54:32.357 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@fc258b1 testClass = TicketsServiceApplicationTests, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [ReactiveWebMergedContextConfiguration@6ff65192 testClass = TicketsServiceApplicationTests, locations = '{}', classes = '{class com.*******.tickets.service.TicketsServiceApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1224144a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3b35a229, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@3b6d844d, org.springframework.boot.test.web.reactive.server.WebTestClientContextCustomizer@3e78b6a5, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@16612a51], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]], class annotated with @DirtiesContext [false] with mode [null].
+07:54:32.405 [main] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener - Performing dependency injection for test context [[DefaultTestContext@fc258b1 testClass = TicketsServiceApplicationTests, testInstance = com.*******.tickets.service.TicketsServiceApplicationTests@68ead359, testMethod = [null], testException = [null], mergedContextConfiguration = [ReactiveWebMergedContextConfiguration@6ff65192 testClass = TicketsServiceApplicationTests, locations = '{}', classes = '{class com.*******.tickets.service.TicketsServiceApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@1224144a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3b35a229, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@3b6d844d, org.springframework.boot.test.web.reactive.server.WebTestClientContextCustomizer@3e78b6a5, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@16612a51], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]]].
+07:54:32.547 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true, server.port=-1}
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -82,13 +82,13 @@ Picked up _JAVA_OPTIONS: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemor
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::        (v2.2.6.RELEASE)
 
-2020-06-15 14:31:05.713  INFO 68 --- [           main] c.s.t.s.TicketsServiceApplicationTests   : Starting TicketsServiceApplicationTests on *******-tickets-service-master-477xc-1-from-build-pack-dttcg-po with PID 68 (started by root in /workspace/source)
-2020-06-15 14:31:05.727  INFO 68 --- [           main] c.s.t.s.TicketsServiceApplicationTests   : No active profile set, falling back to default profiles: default
-2020-06-15 14:31:08.312  INFO 68 --- [           main] c.s.t.service.TicketsServiceApplication  : > Queue Init!
-2020-06-15 14:31:08.324  INFO 68 --- [          queue] c.s.t.service.TicketsServiceApplication  : The Queue is empty!
-2020-06-15 14:31:11.088  INFO 68 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
-2020-06-15 14:31:12.268  INFO 68 --- [           main] c.s.t.s.TicketsServiceApplicationTests   : Started TicketsServiceApplicationTests in 7.231 seconds (JVM running for 10.367)
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.514 s - in com.*******.tickets.service.TicketsServiceApplicationTests
+2020-08-03 07:54:33.111  INFO 72 --- [           main] c.s.t.s.TicketsServiceApplicationTests   : Starting TicketsServiceApplicationTests on *******-tickets-service-master-7w**7-1-from-build-pack-8c-w4lgx with PID 72 (started by root in /workspace/source)
+2020-08-03 07:54:33.120  INFO 72 --- [           main] c.s.t.s.TicketsServiceApplicationTests   : No active profile set, falling back to default profiles: default
+2020-08-03 07:54:36.033  INFO 72 --- [           main] c.s.t.service.TicketsServiceApplication  : > Queue Init!
+2020-08-03 07:54:36.044  INFO 72 --- [          queue] c.s.t.service.TicketsServiceApplication  : The Queue is empty!
+2020-08-03 07:54:39.079  INFO 72 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2020-08-03 07:54:40.656  INFO 72 --- [           main] c.s.t.s.TicketsServiceApplicationTests   : Started TicketsServiceApplicationTests in 8.092 seconds (JVM running for 11.341)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.699 s - in com.*******.tickets.service.TicketsServiceApplicationTests
 [INFO] 
 [INFO] Results:
 [INFO] 
@@ -96,104 +96,110 @@ Picked up _JAVA_OPTIONS: -XX:+UnlockExperimentalVMOptions -Dsun.zip.disableMemor
 [INFO] 
 [INFO] 
 [INFO] --- maven-jar-plugin:3.1.2:jar (default-jar) @ tickets-service ---
-[INFO] Building jar: /workspace/source/target/tickets-service-0.0.6.jar
+[INFO] Building jar: /workspace/source/target/tickets-service-0.0.7.jar
 [INFO] 
 [INFO] --- spring-boot-maven-plugin:2.2.6.RELEASE:repackage (repackage) @ tickets-service ---
 [INFO] Replacing main artifact with repackaged archive
 [INFO] 
 [INFO] --- maven-install-plugin:2.5.2:install (default-install) @ tickets-service ---
-[INFO] Installing /workspace/source/target/tickets-service-0.0.6.jar to /home/jenkins/.mvnrepository/com/*******/tickets/tickets-service/0.0.6/tickets-service-0.0.6.jar
-[INFO] Installing /workspace/source/pom.xml to /home/jenkins/.mvnrepository/com/*******/tickets/tickets-service/0.0.6/tickets-service-0.0.6.pom
+[INFO] Installing /workspace/source/target/tickets-service-0.0.7.jar to /home/jenkins/.mvnrepository/com/*******/tickets/tickets-service/0.0.7/tickets-service-0.0.7.jar
+[INFO] Installing /workspace/source/pom.xml to /home/jenkins/.mvnrepository/com/*******/tickets/tickets-service/0.0.7/tickets-service-0.0.7.pom
 [INFO] 
 [INFO] --- maven-deploy-plugin:2.8.2:deploy (default-deploy) @ tickets-service ---
 [INFO] Using alternate deployment repository local-nexus::default::http://nexus/repository/maven-releases/
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  36.800 s
-[INFO] Finished at: 2020-06-15T14:31:18Z
+[INFO] Total time:  53.966 s
+[INFO] Finished at: 2020-08-03T07:54:51Z
 [INFO] ------------------------------------------------------------------------
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-skaffold-version[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-skaffold-version[0m
 v1.0.1
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-container-build[0m
-E0615 14:31:21.209218       8 aws_credentials.go:77] while getting AWS credentials NoCredentialProviders: no valid providers in chain. Deprecated.
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-container-build[0m
+E0803 07:54:55.294601       8 aws_credentials.go:77] while getting AWS credentials NoCredentialProviders: no valid providers in chain. Deprecated.
 	For verbose messaging see aws.Config.CredentialsChainVerboseErrors
 [36mINFO[0m[0001] Using dockerignore file: /workspace/source/.dockerignore 
 [36mINFO[0m[0001] Retrieving image manifest openjdk:11-jre-slim 
-E0615 14:31:21.584977       8 metadata.go:154] while reading 'google-dockercfg' metadata: http status code: 404 while fetching url http://metadata.google.internal./computeMetadata/v1/instance/attributes/google-dockercfg
-E0615 14:31:21.588439       8 metadata.go:166] while reading 'google-dockercfg-url' metadata: http status code: 404 while fetching url http://metadata.google.internal./computeMetadata/v1/instance/attributes/google-dockercfg-url
-[36mINFO[0m[0002] Retrieving image manifest openjdk:11-jre-slim 
-[36mINFO[0m[0003] Built cross stage deps: map[]                
+E0803 07:54:56.022859       8 metadata.go:154] while reading 'google-dockercfg' metadata: http status code: 404 while fetching url http://metadata.google.internal./computeMetadata/v1/instance/attributes/google-dockercfg
+E0803 07:54:56.027251       8 metadata.go:166] while reading 'google-dockercfg-url' metadata: http status code: 404 while fetching url http://metadata.google.internal./computeMetadata/v1/instance/attributes/google-dockercfg-url
 [36mINFO[0m[0003] Retrieving image manifest openjdk:11-jre-slim 
+[36mINFO[0m[0004] Built cross stage deps: map[]                
 [36mINFO[0m[0004] Retrieving image manifest openjdk:11-jre-slim 
-[36mINFO[0m[0005] Executing 0 build triggers                   
-[36mINFO[0m[0005] cmd: EXPOSE                                  
-[36mINFO[0m[0005] Adding exposed port: 8080/tcp                
-[36mINFO[0m[0005] Resolving srcs [pom.xml target/lib*]...      
-[36mINFO[0m[0005] Checking for cached layer gcr.io/camunda-researchanddevelopment/cache:5d1791f29a85e2c48ea9c758606244bd1e33d7b9c7deb4f2e51d7e9dea543f47... 
-[36mINFO[0m[0005] No cached layer found for cmd COPY pom.xml target/lib* /opt/lib/ 
-[36mINFO[0m[0005] Resolving srcs [target/*.jar]...             
-[36mINFO[0m[0005] Unpacking rootfs as cmd COPY pom.xml target/lib* /opt/lib/ requires it. 
-[36mINFO[0m[0009] ENV PORT 8080                                
-[36mINFO[0m[0009] No files changed in this command, skipping snapshotting. 
-[36mINFO[0m[0009] ENV CLASSPATH /opt/lib                       
-[36mINFO[0m[0009] No files changed in this command, skipping snapshotting. 
-[36mINFO[0m[0009] EXPOSE 8080                                  
-[36mINFO[0m[0009] cmd: EXPOSE                                  
-[36mINFO[0m[0009] Adding exposed port: 8080/tcp                
-[36mINFO[0m[0009] No files changed in this command, skipping snapshotting. 
-[36mINFO[0m[0009] Resolving srcs [pom.xml target/lib*]...      
-[36mINFO[0m[0009] COPY pom.xml target/lib* /opt/lib/           
-[36mINFO[0m[0009] Resolving srcs [pom.xml target/lib*]...      
-[36mINFO[0m[0009] Resolving 1 paths                            
-[36mINFO[0m[0009] Taking snapshot of files...                  
-[36mINFO[0m[0009] Resolving srcs [target/*.jar]...             
-[36mINFO[0m[0009] Pushing layer gcr.io/camunda-researchanddevelopment/cache:5d1791f29a85e2c48ea9c758606244bd1e33d7b9c7deb4f2e51d7e9dea543f47 to cache now 
-[36mINFO[0m[0010] COPY target/*.jar /opt/app.jar               
-[36mINFO[0m[0010] Resolving srcs [target/*.jar]...             
-[36mINFO[0m[0010] Resolving 1 paths                            
-[36mINFO[0m[0010] Taking snapshot of files...                  
-[36mINFO[0m[0010] WORKDIR /opt                                 
-[36mINFO[0m[0010] cmd: workdir                                 
-[36mINFO[0m[0010] Changed working directory to /opt            
-[36mINFO[0m[0010] No files changed in this command, skipping snapshotting. 
-[36mINFO[0m[0010] CMD ["java", "-jar", "app.jar"]              
-[36mINFO[0m[0010] No files changed in this command, skipping snapshotting. 
-[36mINFO[0m[0010] Pushing layer gcr.io/camunda-researchanddevelopment/cache:9cecb332614efa37278cfce2804caa5c7250fe948ac80ff1e49d56bcdf3a607c to cache now 
+[36mINFO[0m[0005] Retrieving image manifest openjdk:11-jre-slim 
+[36mINFO[0m[0006] Executing 0 build triggers                   
+[36mINFO[0m[0006] cmd: EXPOSE                                  
+[36mINFO[0m[0006] Adding exposed port: 8080/tcp                
+[36mINFO[0m[0006] Resolving srcs [pom.xml target/lib*]...      
+[36mINFO[0m[0006] Checking for cached layer gcr.io/camunda-researchanddevelopment/cache:0f25b5dcec27bce91fdc3e8261f7861b31fec69eb284d1aac1bf2a3e09c67635... 
+[36mINFO[0m[0006] No cached layer found for cmd COPY pom.xml target/lib* /opt/lib/ 
+[36mINFO[0m[0006] Resolving srcs [target/*.jar]...             
+[36mINFO[0m[0006] Unpacking rootfs as cmd COPY pom.xml target/lib* /opt/lib/ requires it. 
+[36mINFO[0m[0011] ENV PORT 8080                                
+[36mINFO[0m[0011] No files changed in this command, skipping snapshotting. 
+[36mINFO[0m[0011] ENV CLASSPATH /opt/lib                       
+[36mINFO[0m[0011] No files changed in this command, skipping snapshotting. 
+[36mINFO[0m[0011] EXPOSE 8080                                  
+[36mINFO[0m[0011] cmd: EXPOSE                                  
+[36mINFO[0m[0011] Adding exposed port: 8080/tcp                
+[36mINFO[0m[0011] No files changed in this command, skipping snapshotting. 
+[36mINFO[0m[0011] Resolving srcs [pom.xml target/lib*]...      
+[36mINFO[0m[0011] COPY pom.xml target/lib* /opt/lib/           
+[36mINFO[0m[0011] Resolving srcs [pom.xml target/lib*]...      
+[36mINFO[0m[0011] Resolving 1 paths                            
+[36mINFO[0m[0011] Taking snapshot of files...                  
+[36mINFO[0m[0011] Pushing layer gcr.io/camunda-researchanddevelopment/cache:0f25b5dcec27bce91fdc3e8261f7861b31fec69eb284d1aac1bf2a3e09c67635 to cache now 
+[36mINFO[0m[0011] Resolving srcs [target/*.jar]...             
+[36mINFO[0m[0011] COPY target/*.jar /opt/app.jar               
+[36mINFO[0m[0011] Resolving srcs [target/*.jar]...             
+[36mINFO[0m[0011] Resolving 1 paths                            
+[36mINFO[0m[0011] Taking snapshot of files...                  
+[36mINFO[0m[0012] WORKDIR /opt                                 
+[36mINFO[0m[0012] cmd: workdir                                 
+[36mINFO[0m[0012] Changed working directory to /opt            
+[36mINFO[0m[0012] No files changed in this command, skipping snapshotting. 
+[36mINFO[0m[0012] CMD ["java", "-jar", "app.jar"]              
+[36mINFO[0m[0012] No files changed in this command, skipping snapshotting. 
+[36mINFO[0m[0012] Pushing layer gcr.io/camunda-researchanddevelopment/cache:748470a243f06eb91c09af729c0ffc99780c8cc76ddcbf1a4d1a87d4b5fa847c to cache now 
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-post-build[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-build-post-build[0m
 no CVE provider running in the current ** namespace so skip adding image to be analysed
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-promote-changelog[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-promote-changelog[0m
 Converted /workspace/source/charts/tickets-service to an unshallow repository
-Generating change log from git ref 02958ccfd0af2c3f1b607a517ef50b751b95bdde => 09e8a85ea4327fd5f98b5c8de8509f5d7b44cd28
-WARNING: No release found for *******/tickets-service and tag v0.0.6 so creating a new release
-Updated the release information at https://github.com/*******/tickets-service/releases/tag/v0.0.6
+Generating change log from git ref 09e8a85ea4327fd5f98b5c8de8509f5d7b44cd28 => 4d6c41193502f8cd91ed1b3a58f8309f6e6beec4
+Associating user *******-0 in users.jenkins.io with email Salaboy@gmail.com to git GitProvider user with login *******-1 as emails match
+Adding label jenkins.io/git-github-userid=*******-1 to user *******-0 in users.jenkins.io
+Associating user github in users.jenkins.io with email noreply@github.com to git GitProvider user with login github-0 as emails match
+Adding label jenkins.io/git-github-userid=github-0 to user github in users.jenkins.io
+Finding issues in commit messages using git format
+WARNING: No release found for *******/tickets-service and tag v0.0.7 so creating a new release
+Updated the release information at https://github.com/*******/tickets-service/releases/tag/v0.0.7
 generated: /workspace/source/charts/tickets-service/templates/release.yaml
-Created Release tickets-service-0-0-6 resource in namespace **
-Updating PipelineActivity *******-tickets-service-master-1 with version 0.0.6
-Updated PipelineActivities *******-tickets-service-master-1 with release notes URL: https://github.com/*******/tickets-service/releases/tag/v0.0.6
+Created Release tickets-service-0-0-7 resource in namespace **
+Updating PipelineActivity *******-tickets-service-master-1 with version 0.0.7
+Updated PipelineActivities *******-tickets-service-master-1 with release notes URL: https://github.com/*******/tickets-service/releases/tag/v0.0.7
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-promote-helm-release[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-promote-helm-release[0m
 WARNING: No $CHART_REPOSITORY defined so using the default value of: http://jenkins-x-chartmuseum:8080
 Adding missing Helm repo: storage.googleapis.com https://storage.googleapis.com/chartmuseum.jenkins-x.io
 Successfully added Helm repository storage.googleapis.com.
 Adding missing Helm repo: jenkins-x-chartmuseum http://jenkins-x-chartmuseum:8080
 Successfully added Helm repository jenkins-x-chartmuseum.
 WARNING: No $CHART_REPOSITORY defined so using the default value of: http://jenkins-x-chartmuseum:8080
-Uploading chart file tickets-service-0.0.6.tgz to http://jenkins-x-chartmuseum:8080/api/charts
+Uploading chart file tickets-service-0.0.7.tgz to http://jenkins-x-chartmuseum:8080/api/charts
 Received 201 response: {"saved":true}
 
-Showing logs for build [32msalaboy-tickets-service-master-477xc-1[0m stage [32mfrom-build-pack[0m and container [32mstep-promote-jx-promote[0m
+Showing logs for build [32msalaboy-tickets-service-master-7wjx7-1[0m stage [32mfrom-build-pack[0m and container [32mstep-promote-jx-promote[0m
 WARNING: prow based install so skip waiting for the merge of Pull Requests to go green as currently there is an issue with gettingstatuses from the PR, see https://github.com/jenkins-x/**/issues/2410
 WARNING: No $CHART_REPOSITORY defined so using the default value of: http://jenkins-x-chartmuseum:8080
-Promoting app tickets-service version 0.0.6 to namespace **-staging
-Created Pull Request: https://github.com/*******/environment-zeebe-helm-new-staging/pull/29
-Added label updatebot to Pull Request https://github.com/*******/environment-zeebe-helm-new-staging/pull/29
-got git provider status pending from PR https://github.com/*******/environment-zeebe-helm-new-staging/pull/29
-got git provider status pending from PR https://github.com/*******/environment-zeebe-helm-new-staging/pull/29
-Pull Request https://github.com/*******/environment-zeebe-helm-new-staging/pull/29 is merged at sha 3c48946eb7eef593992c482e78a72f951250d384
+Promoting app tickets-service version 0.0.7 to namespace **-staging
+Created Pull Request: https://github.com/*******/environment-zeebe-helm-new-staging/pull/50
+Added label updatebot to Pull Request https://github.com/*******/environment-zeebe-helm-new-staging/pull/50
+got git provider status pending from PR https://github.com/*******/environment-zeebe-helm-new-staging/pull/50
+got git provider status pending from PR https://github.com/*******/environment-zeebe-helm-new-staging/pull/50
+got git provider status pending from PR https://github.com/*******/environment-zeebe-helm-new-staging/pull/50
+Pull Request https://github.com/*******/environment-zeebe-helm-new-staging/pull/50 is merged at sha ae8c7e33e56a6ecb47237e6b62f38893f828db2a
 Pull Request merged but we are not waiting for the update pipeline to complete!
 WARNING: Could not find the service URL in namespace **-staging for names tickets-service, **-tickets-service, **-staging-tickets-service
