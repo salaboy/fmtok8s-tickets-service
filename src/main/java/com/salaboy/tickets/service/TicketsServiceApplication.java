@@ -10,6 +10,7 @@ import io.cloudevents.v03.CloudEventBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -17,9 +18,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PostConstruct;
-import java.net.URI;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 @SpringBootApplication
@@ -31,85 +29,12 @@ public class TicketsServiceApplication {
         SpringApplication.run(TicketsServiceApplication.class, args);
     }
 
-    @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://localhost:8080}")
-    private String ZEEBE_CLOUD_EVENTS_ROUTER;
     @Value("${PAYMENTS_SERVICE:http://localhost:8083}")
     private String PAYMENTS_SERVICE = "";
-    private LinkedList<TicketPurchaseSession> queue = new LinkedList<>();
-    private int concurrentUsers = 1;
+    
 
-    @PostConstruct
-    public void initQueue() {
-        log.info("> Queue Init!");
-        new Thread("queue") {
-            public void run() {
-                while (true) {
-                    if (!queue.isEmpty()) {
-                        TicketPurchaseSession session = queue.pop();
-                        log.info("You are next: " + session);
-
-                        CloudEventBuilder<String> cloudEventBuilder = CloudEventBuilder.<String>builder()
-                                .withId(UUID.randomUUID().toString())
-                                .withTime(ZonedDateTime.now())
-                                .withType("Tickets.Requested")
-                                .withSource(URI.create("tickets.service.default"))
-                                .withData("{\"tickets\" : " + 2 + "}")
-                                .withDatacontenttype("application/json")
-                                .withSubject(session.getSessionId());
-
-
-                        CloudEvent<AttributesImpl, String> zeebeCloudEvent = ZeebeCloudEventsHelper
-                                .buildZeebeCloudEvent(cloudEventBuilder)
-                                .withCorrelationKey(session.getSessionId()).build();
-
-                        String cloudEventJson = Json.encode(zeebeCloudEvent);
-                        log.info("Before sending Cloud Event: " + cloudEventJson);
-                        WebClient webClient = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
-
-                        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, "/message", zeebeCloudEvent);
-
-                        postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
-                                .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
-                       log.info("Queue Size: " + queue.size());
-                    }else{
-                        log.info("The Queue is empty!");
-                    }
-                    try {
-                        Thread.sleep(10 * 1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
-    }
-
-
-    private static ExchangeFilterFunction logRequest() {
-        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
-            log.info("Request: " + clientRequest.method() + " - " + clientRequest.url());
-            clientRequest.headers().forEach((name, values) -> values.forEach(value -> log.info(name + "=" + value)));
-            return Mono.just(clientRequest);
-        });
-    }
-
-    @PostMapping("/queue")
-    public String queueForTicket(@RequestHeader Map<String, String> headers, @RequestBody Object body) {
-        CloudEvent<AttributesImpl, String> cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
-        if(!cloudEvent.getAttributes().getType().equals("Tickets.CustomerQueueJoined")){
-            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.CustomerQueueJoined' and got: " + cloudEvent.getAttributes().getType() );
-        }
-        String data = cloudEvent.getData().get();
-        TicketPurchaseSession session = Json.decodeValue(data, TicketPurchaseSession.class);
-        String clientId = UUID.randomUUID().toString();
-        session.setClientId(clientId);
-        log.info("> New Customer in Queue: " + session);
-        queue.add(session);
-        return session.toString();
-    }
-
-    @PostMapping("/checkout")
-    public double selectTickets(@RequestHeader Map<String, String> headers, @RequestBody Object body) {
+    @PostMapping(value = "/checkout", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public double selectTickets(@RequestHeader Map<String, String> headers, @RequestBody String body) {
         CloudEvent<AttributesImpl, String> cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
         if(!cloudEvent.getAttributes().getType().equals("Tickets.CheckedOut")){
             throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.CheckedOut' and got: " + cloudEvent.getAttributes().getType() );
