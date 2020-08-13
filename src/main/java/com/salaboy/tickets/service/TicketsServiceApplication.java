@@ -46,7 +46,7 @@ public class TicketsServiceApplication {
 
     }
 
-    @PostMapping(value = "/checkout", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/checkout")
     public double selectTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
         logCloudEvent(cloudEvent);
@@ -54,8 +54,8 @@ public class TicketsServiceApplication {
             throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.CheckedOut' and got: " + cloudEvent.getType() );
         }
         String subject = cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_INSTANCE_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.JOB_KEY);
-
-        BuyTicketsPayload payload = objectMapper.readValue(new String(cloudEvent.getData()), BuyTicketsPayload.class);
+        String doubleQuoted = objectMapper.writeValueAsString(new String(cloudEvent.getData()));
+        BuyTicketsPayload payload = objectMapper.readValue(doubleQuoted, BuyTicketsPayload.class);
 
         int count = Integer.valueOf(payload.getTicketsQuantity());
         double ticketPricePerUnit = 123.5;
