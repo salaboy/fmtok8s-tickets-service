@@ -54,7 +54,8 @@ public class TicketsServiceApplication {
             throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.CheckedOut' and got: " + cloudEvent.getType() );
         }
         String subject = cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_INSTANCE_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.JOB_KEY);
-        BuyTicketsPayload payload = objectMapper.readValue(new String(cloudEvent.getData()), BuyTicketsPayload.class);
+        String data = objectMapper.readValue(new String(cloudEvent.getData()), String.class);
+        BuyTicketsPayload payload = objectMapper.readValue(data, BuyTicketsPayload.class);
 
 
         int count = Integer.valueOf(payload.getTicketsQuantity());
