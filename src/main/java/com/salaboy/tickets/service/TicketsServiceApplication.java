@@ -35,6 +35,7 @@ public class TicketsServiceApplication {
     @Value("${PAYMENTS_SERVICE:http://localhost:8083}")
     private String PAYMENTS_SERVICE = "";
 
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private void logCloudEvent(CloudEvent cloudEvent) {
         EventFormat format = EventFormatProvider
@@ -52,15 +53,11 @@ public class TicketsServiceApplication {
         if(!cloudEvent.getType().equals("Tickets.CheckedOut")){
             throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.CheckedOut' and got: " + cloudEvent.getType() );
         }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
         String subject = cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_INSTANCE_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.JOB_KEY);
 
         BuyTicketsPayload payload = objectMapper.readValue(new String(cloudEvent.getData()), BuyTicketsPayload.class);
 
-
-        int count = payload.getTicketsQuantity();
+        int count = Integer.valueOf(payload.getTicketsQuantity());
         double ticketPricePerUnit = 123.5;
         double totalAmount = count * ticketPricePerUnit;
 
