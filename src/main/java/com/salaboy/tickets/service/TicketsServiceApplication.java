@@ -214,7 +214,7 @@ public class TicketsServiceApplication {
         WebClient paymentsWebClient = WebClient.builder().baseUrl(PAYMENTS_SERVICE).build();
         WebClient.RequestBodySpec uri = (WebClient.RequestBodySpec) paymentsWebClient.post().uri("");
         String paymentPayload = "{" +
-                "\"paymentId\" : \"" + payload.getReservationId() + "\", " +
+                "\"reservationId\" : \"" + payload.getReservationId() + "\", " +
                 "\"amount\" : " + totalAmount + "," +
                 "\"subject\": \"" + subject + "\"" +
                 "}";
