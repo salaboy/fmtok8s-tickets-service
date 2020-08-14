@@ -159,7 +159,7 @@ public class TicketsServiceApplication {
                 .withTime(ZonedDateTime.now())
                 .withType("Tickets.Reserved")
                 .withSource(URI.create("tickets-service.default.svc.cluster.local"))
-                .withData(data.getBytes())
+                .withData(objectMapper.writeValueAsString(data).getBytes())
                 .withDataContentType("application/json")
                 .withSubject(payload.getSessionId());
 
