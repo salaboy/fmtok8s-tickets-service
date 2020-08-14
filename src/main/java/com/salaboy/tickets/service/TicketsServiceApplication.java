@@ -121,7 +121,7 @@ public class TicketsServiceApplication {
 
                         webClientApproved = WebClient.builder().baseUrl(FRONT_END).filter(logRequest()).build();
 
-                        WebClient.ResponseSpec postApprovedFrontEndCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/", zeebeCloudEvent);
+                        WebClient.ResponseSpec postApprovedFrontEndCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/api/", zeebeCloudEvent);
 
                         postApprovedFrontEndCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                                 .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
