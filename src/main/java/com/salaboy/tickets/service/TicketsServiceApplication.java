@@ -2,7 +2,9 @@ package com.salaboy.tickets.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salaboy.cloudevents.helper.CloudEventsHelper;
 import io.cloudevents.CloudEvent;
+import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.format.EventFormat;
 import io.cloudevents.core.provider.EventFormatProvider;
 import io.cloudevents.jackson.JsonFormat;
@@ -13,15 +15,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.LinkedList;
+import java.util.UUID;
 
 @SpringBootApplication
 @RestController
@@ -35,6 +42,10 @@ public class TicketsServiceApplication {
     @Value("${PAYMENTS_SERVICE:http://localhost:8083}")
     private String PAYMENTS_SERVICE = "";
 
+    @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://zeebe-cloud-events-router}")
+    private String ZEEBE_CLOUD_EVENTS_ROUTER;
+
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private void logCloudEvent(CloudEvent cloudEvent) {
@@ -46,32 +57,148 @@ public class TicketsServiceApplication {
 
     }
 
-    @PostMapping(value = "/checkout")
-    public double selectTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
+    private LinkedList<String> queue = new LinkedList<>();
+
+    @PostConstruct
+    public void initPaymentsChecker() {
+        log.info("> PaymentChecker Init!");
+        new Thread("paymentChecker") {
+            public void run() {
+                while (true) {
+                    if (!queue.isEmpty()) {
+                        String reservationId = queue.pop();
+
+                        WebClient webClient = WebClient.builder().baseUrl(PAYMENTS_SERVICE).filter(logRequest()).build();
+
+                        WebClient.ResponseSpec getPaymentConfirmation = webClient.get().uri("/" + reservationId).retrieve();
+                        Boolean isPaymentProccessed = false;
+                        while (!isPaymentProccessed) {
+                            isPaymentProccessed = getPaymentConfirmation.bodyToMono(Boolean.class).doOnError(t -> t.printStackTrace())
+                                    .doOnSuccess(b -> System.out.println("Is Reservation " + reservationId + " processed?  -> " + b)).block();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        String paymentConfirmation = null;
+                        try {
+                            paymentConfirmation = objectMapper.writeValueAsString("{ \"reservationId\" : \"" + reservationId + "\" }");
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Get pending payments requests.. and GET /payments/ID -> until it returns true
+                        // and when it returns true.. send this CE:
+                        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
+                                .withId(UUID.randomUUID().toString())
+                                .withTime(ZonedDateTime.now())
+                                .withType("Payments.Authorized")
+                                .withSource(URI.create("payments.service.default"))
+                                .withData(paymentConfirmation.getBytes())
+                                .withDataContentType("application/json")
+                                .withSubject("payments.service.default");
+
+                        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
+                                .buildZeebeCloudEvent(cloudEventBuilder)
+                                .withCorrelationKey(reservationId)
+                                .build();
+
+                        logCloudEvent(zeebeCloudEvent);
+
+                        WebClient webClientApproved = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
+
+                        WebClient.ResponseSpec postApprovedCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/message", zeebeCloudEvent);
+
+                        postApprovedCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
+                                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
+
+
+                    } else {
+                        log.info("The Queue is empty!");
+                    }
+                    try {
+                        Thread.sleep(10 * 1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
+
+    @PostMapping(value = "/reserve")
+    public String reserveTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
         logCloudEvent(cloudEvent);
-        if(!cloudEvent.getType().equals("Tickets.CheckedOut")){
-            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.CheckedOut' and got: " + cloudEvent.getType() );
+        if (!cloudEvent.getType().equals("Tickets.Reserved")) {
+            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.Reserved' and got: " + cloudEvent.getType());
         }
-        String subject = cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_INSTANCE_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.JOB_KEY);
-        String data = objectMapper.readValue(new String(cloudEvent.getData()), String.class);
-        BuyTicketsPayload payload = objectMapper.readValue(data, BuyTicketsPayload.class);
 
+        String data = objectMapper.readValue(new String(cloudEvent.getData()), String.class);
+        ReserveTicketsPayload payload = objectMapper.readValue(data, ReserveTicketsPayload.class);
+        // A reservation code is generated to keep the reserve alive and correlate with payment
+        payload.setReservationId(UUID.randomUUID().toString());
+        // Tickets reservation mechanism should kick in here..
+
+
+        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
+                .withId(UUID.randomUUID().toString())
+                .withTime(ZonedDateTime.now())
+                .withType("Tickets.Reserved")
+                .withSource(URI.create("tickets-service.default.svc.cluster.local"))
+                .withData(data.getBytes())
+                .withDataContentType("application/json")
+                .withSubject(payload.getSessionId());
+
+        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
+                .buildZeebeCloudEvent(cloudEventBuilder)
+                .withCorrelationKey(payload.getSessionId()).build();
+
+
+        logCloudEvent(zeebeCloudEvent);
+        WebClient webClient = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
+
+        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, "/message", zeebeCloudEvent);
+
+        postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
+                .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
+
+        return "OK!";
+    }
+
+    private static ExchangeFilterFunction logRequest() {
+        return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
+            log.info("Request: " + clientRequest.method() + " - " + clientRequest.url());
+            clientRequest.headers().forEach((name, values) -> values.forEach(value -> log.info(name + "=" + value)));
+            return Mono.just(clientRequest);
+        });
+    }
+
+    @PostMapping
+    public String checkOutTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
+
+        CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
+        logCloudEvent(cloudEvent);
+        if (!cloudEvent.getType().equals("Tickets.PaymentRequested")) {
+            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.PaymentRequested' and got: " + cloudEvent.getType());
+        }
+
+        String data = objectMapper.readValue(new String(cloudEvent.getData()), String.class);
+        ReserveTicketsPayload payload = objectMapper.readValue(data, ReserveTicketsPayload.class);
 
         int count = Integer.valueOf(payload.getTicketsQuantity());
         double ticketPricePerUnit = 123.5;
         double totalAmount = count * ticketPricePerUnit;
 
-
-        log.info("> Delegate to Payment Service to collect the payment.");
-
+        String subject = cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_INSTANCE_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.JOB_KEY);
         WebClient paymentsWebClient = WebClient.builder().baseUrl(PAYMENTS_SERVICE).build();
-        WebClient.RequestBodySpec uri = (WebClient.RequestBodySpec)paymentsWebClient.post().uri("");
+        WebClient.RequestBodySpec uri = (WebClient.RequestBodySpec) paymentsWebClient.post().uri("");
         String paymentPayload = "{" +
-                                    "\"paymentId\" : \"ABC-123\", " +
-                                    "\"amount\" : " +totalAmount + "," +
-                                    "\"subject\": \"" + subject + "\"" +
-                                "}";
+                "\"paymentId\" : \"" + payload.getReservationId() + "\", " +
+                "\"amount\" : " + totalAmount + "," +
+                "\"subject\": \"" + subject + "\"" +
+                "}";
         WebClient.RequestHeadersSpec<?> headersSpec = uri.body(BodyInserters.fromValue(paymentPayload));
         headersSpec.header("Content-Type", new String[]{"application/json"})
                 .retrieve().bodyToMono(String.class)
@@ -79,25 +206,29 @@ public class TicketsServiceApplication {
                 .doOnSuccess(s -> System.out.println("Result -> " + s))
                 .subscribe();
 
+        //Add reservation to queue to check for payment processing
+        queue.add(payload.getReservationId());
 
-        return totalAmount;
+        return "OK";
+
     }
 
+
     @PostMapping("/tickets/emit")
-    public String emitTickets(@RequestHeader HttpHeaders headers, @RequestBody String body){
+    public String emitTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) {
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
-        if(!cloudEvent.getType().equals("Tickets.Emitted")){
-            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.Checkout' and got: " + cloudEvent.getType() );
+        if (!cloudEvent.getType().equals("Tickets.Emitted")) {
+            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Tickets.Checkout' and got: " + cloudEvent.getType());
         }
         log.info("This are your tickets for the event");
         return "This are your tickets for the event";
     }
 
     @PostMapping("/notifications")
-    public String notifyCustomer(@RequestHeader HttpHeaders headers, @RequestBody Object body){
+    public String notifyCustomer(@RequestHeader HttpHeaders headers, @RequestBody Object body) {
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
-        if(!cloudEvent.getType().equals("Notifications.Requested")){
-            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Notifications.Requested' and got: " + cloudEvent.getType() );
+        if (!cloudEvent.getType().equals("Notifications.Requested")) {
+            throw new IllegalStateException("Wrong Cloud Event Type, expected: 'Notifications.Requested' and got: " + cloudEvent.getType());
         }
         log.info("Notification Sent!");
         return "Notification Sent!";

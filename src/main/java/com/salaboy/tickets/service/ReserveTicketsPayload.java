@@ -7,18 +7,20 @@ import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BuyTicketsPayload {
+public class ReserveTicketsPayload {
     private String sessionId;
     private String ticketsType;
     private String ticketsQuantity;
+    private String reservationId;
 
-    public BuyTicketsPayload() {
+    public ReserveTicketsPayload() {
     }
 
-    public BuyTicketsPayload(String sessionId, String ticketsType, String ticketsQuantity) {
+    public ReserveTicketsPayload(String sessionId, String ticketsType, String ticketsQuantity, String reservationId) {
         this.sessionId = sessionId;
         this.ticketsType = ticketsType;
         this.ticketsQuantity = ticketsQuantity;
+        this.reservationId = reservationId;
     }
 
     public String getSessionId() {
@@ -45,12 +47,21 @@ public class BuyTicketsPayload {
         this.ticketsQuantity = ticketsQuantity;
     }
 
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(String reservationId) {
+        this.reservationId = reservationId;
+    }
+
     @Override
     public String toString() {
-        return "BuyTicketsPayload{" +
+        return "ReserveTicketsPayload{" +
                 "sessionId='" + sessionId + '\'' +
                 ", ticketsType='" + ticketsType + '\'' +
-                ", ticketsQuantity=" + ticketsQuantity +
+                ", ticketsQuantity='" + ticketsQuantity + '\'' +
+                ", reservationId='" + reservationId + '\'' +
                 '}';
     }
 
@@ -58,14 +69,15 @@ public class BuyTicketsPayload {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BuyTicketsPayload that = (BuyTicketsPayload) o;
-        return ticketsQuantity == that.ticketsQuantity &&
-                Objects.equals(sessionId, that.sessionId) &&
-                Objects.equals(ticketsType, that.ticketsType);
+        ReserveTicketsPayload that = (ReserveTicketsPayload) o;
+        return Objects.equals(sessionId, that.sessionId) &&
+                Objects.equals(ticketsType, that.ticketsType) &&
+                Objects.equals(ticketsQuantity, that.ticketsQuantity) &&
+                Objects.equals(reservationId, that.reservationId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sessionId, ticketsType, ticketsQuantity);
+        return Objects.hash(sessionId, ticketsType, ticketsQuantity, reservationId);
     }
 }
