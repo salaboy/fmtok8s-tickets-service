@@ -45,6 +45,8 @@ public class TicketsServiceApplication {
     @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://zeebe-cloud-events-router}")
     private String ZEEBE_CLOUD_EVENTS_ROUTER;
 
+    @Value("${FRONT_END:http://customer-waiting-room-app.default.svc.cluster.local}")
+    private String FRONT_END;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -93,7 +95,7 @@ public class TicketsServiceApplication {
                         CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
                                 .withId(UUID.randomUUID().toString())
                                 .withTime(ZonedDateTime.now())
-                                .withType("Payments.Authorized")
+                                .withType("Tickets.PaymentsAuthorized")
                                 .withSource(URI.create("payments.service.default"))
                                 .withData(paymentConfirmation.getBytes())
                                 .withDataContentType("application/json")
@@ -112,6 +114,16 @@ public class TicketsServiceApplication {
 
                         postApprovedCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                                 .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
+
+                        webClientApproved = WebClient.builder().baseUrl(FRONT_END).filter(logRequest()).build();
+
+                        WebClient.ResponseSpec postApprovedFrontEndCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/", zeebeCloudEvent);
+
+                        postApprovedFrontEndCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
+                                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
+
+
+
 
 
                     } else {
@@ -164,7 +176,7 @@ public class TicketsServiceApplication {
         postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                 .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
 
-        return "OK!";
+        return payload.getReservationId();
     }
 
     private static ExchangeFilterFunction logRequest() {
@@ -175,7 +187,7 @@ public class TicketsServiceApplication {
         });
     }
 
-    @PostMapping
+    @PostMapping("/checkout")
     public String checkOutTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
 
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
