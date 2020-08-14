@@ -89,7 +89,7 @@ public class TicketsServiceApplication {
                         }
                         String paymentConfirmation = null;
                         try {
-                            paymentConfirmation = objectMapper.writeValueAsString("{ \"reservationId\" : \"" + reservationId + "\" }");
+                            paymentConfirmation = objectMapper.writeValueAsString("{ \"reservationId\" : \"" + reservationId + "\", \"sessionId\" : \""+reservationsMap.get(reservationId).getSessionId()+"\" }");
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
