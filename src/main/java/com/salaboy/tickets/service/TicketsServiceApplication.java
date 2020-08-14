@@ -28,7 +28,9 @@ import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootApplication
 @RestController
@@ -60,6 +62,8 @@ public class TicketsServiceApplication {
     }
 
     private LinkedList<String> queue = new LinkedList<>();
+
+    private Map<String, Reservation> reservationsMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void initPaymentsChecker() {
@@ -140,7 +144,7 @@ public class TicketsServiceApplication {
     }
 
     @PostMapping(value = "/reserve")
-    public String reserveTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
+    public Reservation reserveTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
         logCloudEvent(cloudEvent);
         if (!cloudEvent.getType().equals("Tickets.Reserved")) {
@@ -150,9 +154,11 @@ public class TicketsServiceApplication {
         String data = objectMapper.readValue(new String(cloudEvent.getData()), String.class);
         ReserveTicketsPayload payload = objectMapper.readValue(data, ReserveTicketsPayload.class);
         // A reservation code is generated to keep the reserve alive and correlate with payment
-        payload.setReservationId(UUID.randomUUID().toString());
-        // Tickets reservation mechanism should kick in here..
 
+        // Tickets reservation mechanism should kick in here..
+        Reservation reservation = new Reservation(UUID.randomUUID().toString(), payload.getSessionId(), payload.getTicketsType(), Integer.parseInt(payload.getTicketsQuantity()));
+
+        reservationsMap.put(payload.getReservationId(), reservation);
 
         CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
                 .withId(UUID.randomUUID().toString())
@@ -176,7 +182,7 @@ public class TicketsServiceApplication {
         postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                 .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
 
-        return payload.getReservationId();
+        return reservation;
     }
 
     private static ExchangeFilterFunction logRequest() {
@@ -199,7 +205,8 @@ public class TicketsServiceApplication {
         String data = objectMapper.readValue(new String(cloudEvent.getData()), String.class);
         ReserveTicketsPayload payload = objectMapper.readValue(data, ReserveTicketsPayload.class);
 
-        int count = Integer.valueOf(payload.getTicketsQuantity());
+
+        int count = reservationsMap.get(payload.getReservationId()).getTicketsQuantity();
         double ticketPricePerUnit = 123.5;
         double totalAmount = count * ticketPricePerUnit;
 
