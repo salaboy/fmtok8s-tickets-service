@@ -158,7 +158,7 @@ public class TicketsServiceApplication {
         // Tickets reservation mechanism should kick in here..
         Reservation reservation = new Reservation(UUID.randomUUID().toString(), payload.getSessionId(), payload.getTicketsType(), Integer.parseInt(payload.getTicketsQuantity()));
 
-        reservationsMap.put(payload.getReservationId(), reservation);
+        reservationsMap.put(reservation.getReservationId(), reservation);
 
         CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
                 .withId(UUID.randomUUID().toString())
