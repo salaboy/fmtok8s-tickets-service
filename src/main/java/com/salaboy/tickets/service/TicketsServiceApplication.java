@@ -76,7 +76,7 @@ public class TicketsServiceApplication {
 
                         WebClient webClient = WebClient.builder().baseUrl(PAYMENTS_SERVICE).filter(logRequest()).build();
 
-                        WebClient.ResponseSpec getPaymentConfirmation = webClient.get().uri("/" + reservationId).retrieve();
+                        WebClient.ResponseSpec getPaymentConfirmation = webClient.get().uri("/api/" + reservationId).retrieve();
                         Boolean isPaymentProccessed = false;
                         while (!isPaymentProccessed) {
                             isPaymentProccessed = getPaymentConfirmation.bodyToMono(Boolean.class).doOnError(t -> t.printStackTrace())
