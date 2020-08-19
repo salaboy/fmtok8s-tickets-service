@@ -212,7 +212,7 @@ public class TicketsServiceApplication {
 
         String subject = cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.WORKFLOW_INSTANCE_KEY) + ":" + cloudEvent.getExtension(ZeebeCloudEventExtension.JOB_KEY);
         WebClient paymentsWebClient = WebClient.builder().baseUrl(PAYMENTS_SERVICE).build();
-        WebClient.RequestBodySpec uri = (WebClient.RequestBodySpec) paymentsWebClient.post().uri("");
+        WebClient.RequestBodySpec uri = (WebClient.RequestBodySpec) paymentsWebClient.post().uri("/api/");
         String paymentPayload = "{" +
                 "\"reservationId\" : \"" + payload.getReservationId() + "\", " +
                 "\"amount\" : " + totalAmount + "," +
