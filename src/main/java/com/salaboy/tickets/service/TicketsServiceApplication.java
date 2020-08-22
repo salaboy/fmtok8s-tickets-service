@@ -148,7 +148,7 @@ public class TicketsServiceApplication {
     }
 
     @PostMapping(value = "/reserve")
-    public Reservation reserveTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
+    public void reserveTickets(@RequestHeader HttpHeaders headers, @RequestBody String body) throws JsonProcessingException {
         CloudEvent cloudEvent = ZeebeCloudEventsHelper.parseZeebeCloudEventFromRequest(headers, body);
         logCloudEvent(cloudEvent);
         if (!cloudEvent.getType().equals("Tickets.Reserved")) {
@@ -160,7 +160,7 @@ public class TicketsServiceApplication {
         // A reservation code is generated to keep the reserve alive and correlate with payment
 
         // Tickets reservation mechanism should kick in here..
-        Reservation reservation = new Reservation(UUID.randomUUID().toString(), payload.getSessionId(), payload.getTicketsType(), Integer.parseInt(payload.getTicketsQuantity()));
+        Reservation reservation = new Reservation(payload.getReservationId(), payload.getSessionId(), payload.getTicketsType(), Integer.parseInt(payload.getTicketsQuantity()));
 
         reservationsMap.put(reservation.getReservationId(), reservation);
 
@@ -186,7 +186,6 @@ public class TicketsServiceApplication {
 //        postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
 //                .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
 
-        return reservation;
     }
 
     private static ExchangeFilterFunction logRequest() {
