@@ -26,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.Map;
@@ -44,11 +45,14 @@ public class TicketsServiceApplication {
     @Value("${PAYMENTS_SERVICE:http://localhost:8083}")
     private String PAYMENTS_SERVICE = "";
 
-    @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://zeebe-cloud-events-router}")
-    private String ZEEBE_CLOUD_EVENTS_ROUTER;
+//    @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://zeebe-cloud-events-router}")
+//    private String ZEEBE_CLOUD_EVENTS_ROUTER;
 
-    @Value("${FRONT_END:http://customer-waiting-room-app.default.svc.cluster.local}")
-    private String FRONT_END;
+//    @Value("${FRONT_END:http://customer-waiting-room-app.default.svc.cluster.local}")
+//    private String FRONT_END;
+
+    @Value("${K_SINK:http://broker-ingress.knative-eventing.svc.cluster.local/default/default}")
+    private String K_SINK;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -98,7 +102,7 @@ public class TicketsServiceApplication {
                         // and when it returns true.. send this CE:
                         CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
                                 .withId(UUID.randomUUID().toString())
-                                .withTime(ZonedDateTime.now())
+                                .withTime(OffsetDateTime.now().toZonedDateTime()) // bug-> https://github.com/cloudevents/sdk-java/issues/200
                                 .withType("Tickets.PaymentsAuthorized")
                                 .withSource(URI.create("payments.service.default"))
                                 .withData(paymentConfirmation.getBytes())
@@ -112,19 +116,19 @@ public class TicketsServiceApplication {
 
                         logCloudEvent(zeebeCloudEvent);
 
-                        WebClient webClientApproved = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
+                        WebClient webClientApproved = WebClient.builder().baseUrl(K_SINK).filter(logRequest()).build();
 
-                        WebClient.ResponseSpec postApprovedCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/message", zeebeCloudEvent);
+                        WebClient.ResponseSpec postApprovedCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, zeebeCloudEvent);
 
                         postApprovedCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                                 .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
 
-                        webClientApproved = WebClient.builder().baseUrl(FRONT_END).filter(logRequest()).build();
-
-                        WebClient.ResponseSpec postApprovedFrontEndCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/api/", zeebeCloudEvent);
-
-                        postApprovedFrontEndCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
-                                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
+//                        webClientApproved = WebClient.builder().baseUrl(FRONT_END).filter(logRequest()).build();
+//
+//                        WebClient.ResponseSpec postApprovedFrontEndCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/api/", zeebeCloudEvent);
+//
+//                        postApprovedFrontEndCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
+//                                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
 
 
 
@@ -160,27 +164,27 @@ public class TicketsServiceApplication {
 
         reservationsMap.put(reservation.getReservationId(), reservation);
 
-        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
-                .withId(UUID.randomUUID().toString())
-                .withTime(ZonedDateTime.now())
-                .withType("Tickets.Reserved")
-                .withSource(URI.create("tickets-service.default.svc.cluster.local"))
-                .withData(objectMapper.writeValueAsString(objectMapper.writeValueAsString(reservation)).getBytes())
-                .withDataContentType("application/json")
-                .withSubject(payload.getSessionId());
-
-        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
-                .buildZeebeCloudEvent(cloudEventBuilder)
-                .withCorrelationKey(payload.getSessionId()).build();
-
-
-        logCloudEvent(zeebeCloudEvent);
-        WebClient webClient = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
-
-        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, "/message", zeebeCloudEvent);
-
-        postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
-                .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
+//        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
+//                .withId(UUID.randomUUID().toString())
+//                .withTime(ZonedDateTime.now())
+//                .withType("Tickets.Reserved")
+//                .withSource(URI.create("tickets-service.default.svc.cluster.local"))
+//                .withData(objectMapper.writeValueAsString(objectMapper.writeValueAsString(reservation)).getBytes())
+//                .withDataContentType("application/json")
+//                .withSubject(payload.getSessionId());
+//
+//        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
+//                .buildZeebeCloudEvent(cloudEventBuilder)
+//                .withCorrelationKey(payload.getSessionId()).build();
+//
+//
+//        logCloudEvent(zeebeCloudEvent);
+//        WebClient webClient = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
+//
+//        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, "/message", zeebeCloudEvent);
+//
+//        postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
+//                .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
 
         return reservation;
     }
