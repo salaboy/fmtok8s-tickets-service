@@ -100,7 +100,7 @@ public class TicketsServiceApplication {
 
                         //Get pending payments requests.. and GET /payments/ID -> until it returns true
                         // and when it returns true.. send this CE:
-                        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
+                        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v1()
                                 .withId(UUID.randomUUID().toString())
                                 .withTime(OffsetDateTime.now().toZonedDateTime()) // bug-> https://github.com/cloudevents/sdk-java/issues/200
                                 .withType("Tickets.PaymentsAuthorized")
