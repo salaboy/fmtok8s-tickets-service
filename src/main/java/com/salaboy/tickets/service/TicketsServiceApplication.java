@@ -45,11 +45,6 @@ public class TicketsServiceApplication {
     @Value("${PAYMENTS_SERVICE:http://localhost:8083}")
     private String PAYMENTS_SERVICE = "";
 
-//    @Value("${ZEEBE_CLOUD_EVENTS_ROUTER:http://zeebe-cloud-events-router}")
-//    private String ZEEBE_CLOUD_EVENTS_ROUTER;
-
-//    @Value("${FRONT_END:http://customer-waiting-room-app.default.svc.cluster.local}")
-//    private String FRONT_END;
 
     @Value("${K_SINK:http://broker-ingress.knative-eventing.svc.cluster.local/default/default}")
     private String K_SINK;
@@ -123,19 +118,8 @@ public class TicketsServiceApplication {
                         postApprovedCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                                 .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
 
-//                        webClientApproved = WebClient.builder().baseUrl(FRONT_END).filter(logRequest()).build();
-//
-//                        WebClient.ResponseSpec postApprovedFrontEndCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, "/api/", zeebeCloudEvent);
-//
-//                        postApprovedFrontEndCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
-//                                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
-
-
-
-
-
                     } else {
-                        log.info("The Queue is empty!");
+                        log.info("The Payment Checker queue is empty!");
                     }
                     try {
                         Thread.sleep(10 * 1000);
@@ -164,27 +148,6 @@ public class TicketsServiceApplication {
 
         reservationsMap.put(reservation.getReservationId(), reservation);
 
-//        CloudEventBuilder cloudEventBuilder = CloudEventBuilder.v03()
-//                .withId(UUID.randomUUID().toString())
-//                .withTime(ZonedDateTime.now())
-//                .withType("Tickets.Reserved")
-//                .withSource(URI.create("tickets-service.default.svc.cluster.local"))
-//                .withData(objectMapper.writeValueAsString(objectMapper.writeValueAsString(reservation)).getBytes())
-//                .withDataContentType("application/json")
-//                .withSubject(payload.getSessionId());
-//
-//        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
-//                .buildZeebeCloudEvent(cloudEventBuilder)
-//                .withCorrelationKey(payload.getSessionId()).build();
-//
-//
-//        logCloudEvent(zeebeCloudEvent);
-//        WebClient webClient = WebClient.builder().baseUrl(ZEEBE_CLOUD_EVENTS_ROUTER).filter(logRequest()).build();
-//
-//        WebClient.ResponseSpec postCloudEvent = CloudEventsHelper.createPostCloudEvent(webClient, "/message", zeebeCloudEvent);
-//
-//        postCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
-//                .doOnSuccess(s -> System.out.println("Result -> " + s)).subscribe();
 
     }
 
