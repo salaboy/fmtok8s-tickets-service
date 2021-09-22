@@ -109,7 +109,7 @@ public class TicketsServiceApplication {
                                 .withId(UUID.randomUUID().toString())
                                 .withType("Tickets.PaymentsAuthorized")
                                 .withSource(URI.create("payments.service.default"))
-                                .withExtension("correlationKey", reservationId)
+                                .withExtension("correlationkey", reservationId)
 //                                .withData(paymentConfirmation.getBytes())
                                 .withDataContentType("application/json")
                                 .withSubject("payments.service.default");
@@ -119,11 +119,12 @@ public class TicketsServiceApplication {
 //                                .withCorrelationKey(reservationId)
 //                                .build();
 
-//                        logCloudEvent(zeebeCloudEvent);
+                        CloudEvent cloudEvent = cloudEventBuilder.build();
+                        logCloudEvent(cloudEvent);
 
                         WebClient webClientApproved = WebClient.builder().baseUrl(K_SINK).filter(logRequest()).build();
 
-                        HttpHeaders outgoing = CloudEventHttpUtils.toHttp(cloudEventBuilder.build());
+                        HttpHeaders outgoing = CloudEventHttpUtils.toHttp(cloudEvent);
 
                         webClientApproved.post().headers(httpHeaders -> outgoing.toSingleValueMap()).bodyValue(paymentConfirmation).retrieve().bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                                 .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
