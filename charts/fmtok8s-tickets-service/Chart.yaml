@@ -1,0 +1,5 @@
+apiVersion: v2
+description: Tickets Service Helm Chart
+icon: https://raw.githubusercontent.com/jenkins-x/jenkins-x-platform/d273e09/images/nodejs.png
+name: fmtok8s-tickets-service
+version: 0.1.0

@@ -28,12 +28,12 @@ mvn package
 ```
 
 ```
-docker build -t salaboy/fmtok8s-c4p-rest:0.1.0
-docker push salaboy/fmtok8s-c4p-rest:0.1.0
+docker build -t salaboy/fmtok8s-tickets-service:0.1.0
+docker push salaboy/fmtok8s-tickets-service:0.1.0
 ```
 
 ```
-cd charts/fmtok8s-c4p-rest
+cd charts/fmtok8s-tickets-service
 helm package .
 ```
 
