@@ -1,7 +1,6 @@
 package com.salaboy.tickets.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.format.EventFormat;
@@ -26,7 +25,6 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +46,6 @@ public class TicketsServiceApplication {
     @Value("${K_SINK:http://broker-ingress.knative-eventing.svc.cluster.local/default/default}")
     private String K_SINK;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     private void logCloudEvent(CloudEvent cloudEvent) {
         EventFormat format = EventFormatProvider
@@ -96,12 +93,8 @@ public class TicketsServiceApplication {
                                 e.printStackTrace();
                             }
                         }
-                        String paymentConfirmation = null;
-                        try {
-                            paymentConfirmation = objectMapper.writeValueAsString("{ \"reservationId\" : \"" + reservationId + "\", \"sessionId\" : \""+reservationsMap.get(reservationId).getSessionId()+"\" }");
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
+                        PaymentConfirmation paymentConfirmation = new PaymentConfirmation(reservationsMap.get(reservationId).getSessionId(), reservationId );
+
 
                         //Get pending payments requests.. and GET /payments/ID -> until it returns true
                         // and when it returns true.. send this CE:
@@ -110,14 +103,7 @@ public class TicketsServiceApplication {
                                 .withType("Tickets.PaymentsAuthorized")
                                 .withSource(URI.create("payments.service.default"))
                                 .withExtension("correlationkey", reservationId)
-//                                .withData(paymentConfirmation.getBytes())
-                                .withDataContentType("application/json")
-                                .withSubject("payments.service.default");
-
-//                        CloudEvent zeebeCloudEvent = ZeebeCloudEventsHelper
-//                                .buildZeebeCloudEvent(cloudEventBuilder)
-//                                .withCorrelationKey(reservationId)
-//                                .build();
+                                .withDataContentType("application/json; charset=UTF-8");
 
                         CloudEvent cloudEvent = cloudEventBuilder.build();
                         logCloudEvent(cloudEvent);
@@ -126,13 +112,9 @@ public class TicketsServiceApplication {
 
                         HttpHeaders outgoing = CloudEventHttpUtils.toHttp(cloudEvent);
 
-                        webClientApproved.post().headers(httpHeaders -> outgoing.toSingleValueMap()).bodyValue(paymentConfirmation).retrieve().bodyToMono(String.class).doOnError(t -> t.printStackTrace())
+                        webClientApproved.post().headers(httpHeaders -> httpHeaders.putAll(outgoing)).bodyValue(paymentConfirmation).retrieve().bodyToMono(String.class).doOnError(t -> t.printStackTrace())
                                 .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
 
-//                        WebClient.ResponseSpec postApprovedCloudEvent = CloudEventsHelper.createPostCloudEvent(webClientApproved, zeebeCloudEvent);
-//
-//                        postApprovedCloudEvent.bodyToMono(String.class).doOnError(t -> t.printStackTrace())
-//                                .doOnSuccess(s -> log.info("Result -> " + s)).subscribe();
 
                     } else {
                         log.info("The Payment Checker queue is empty!");
@@ -239,6 +221,7 @@ public class TicketsServiceApplication {
         return "Notification Sent!";
 
     }
+
 
 
 }
